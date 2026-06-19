@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORTIS Elsa — Data &amp; BI Analyst · matching</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --bg-2:#e9e3d7; --card:#ffffff; --card-2:#faf7f1;
+    --ink:#1c2430; --ink-2:#2a3441; --soft:#5a6573; --mut:#92999f;
+    --navy:#1c2430; --navy-2:#2a3441;
+    --accent:#b5512f; --accent-deep:#9a4226; --accent-soft:#b5512f14;
+    --gold:#c08a3e; --sage:#4f8c6b; --sage-bg:#4f8c6b14; --blue:#3f5a7d;
+    --line:#e4ddd0; --line-2:#d8cfbe;
+    --serif:"Georgia","Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+    --sh:0 4px 20px #1c24300d; --sh-lg:0 24px 60px #1c243016;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation:none!important;transition-duration:.001ms!important;}.rv{opacity:1!important;transform:none!important;}}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60% 40% at 88% 0%,#b5512f0a 0%,transparent 55%),radial-gradient(50% 38% at 5% 6%,#1c243008 0%,transparent 50%);}
+  .wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 22px;}
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);}
+  .rv.in{opacity:1;transform:none;}
+  ::selection{background:var(--accent);color:#fff;}
+
+  /* top bar */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:22px 2px 6px;}
+  .top .logo{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--navy);}
+  .top .mono{width:32px;height:32px;border-radius:8px;background:var(--navy);color:var(--bg);display:grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:.5px;}
+  .top .av{font-family:var(--mono);font-size:10.5px;color:var(--sage);display:flex;align-items:center;gap:7px;background:var(--sage-bg);padding:6px 12px;border-radius:99px;}
+  .top .av .d{width:6px;height:6px;border-radius:50%;background:var(--sage);}
+
+  /* ===== ÉCRAN 1 : accroche ===== */
+  .hero{padding:42px 0 16px;}
+  .hero .kick{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,8vw,68px);line-height:.96;letter-spacing:-1.5px;margin-bottom:8px;color:var(--navy);}
+  .hero .sub{font-family:var(--mono);font-size:13px;letter-spacing:1px;color:var(--soft);text-transform:uppercase;margin-bottom:22px;}
+  .hero .rotor{font-family:var(--serif);font-size:clamp(20px,3.6vw,28px);color:var(--soft);margin:6px 0 20px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .hero .rotor .rfix{font-style:italic;}
+  .hero .rotor .rword{color:var(--accent);font-weight:600;border-bottom:2px solid var(--accent-soft);transition:opacity .35s ease,transform .35s ease;display:inline-block;}
+  .hero .rotor .rword.out{opacity:0;transform:translateY(-6px);}
+  .hero .pitch{font-family:var(--serif);font-size:clamp(17px,2.6vw,21px);line-height:1.5;color:var(--ink);max-width:560px;}
+  .hero .pitch b{color:var(--accent);font-weight:600;}
+
+  /* piliers expertise */
+  .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:30px 0 8px;}
+  @media(max-width:620px){.pillars{grid-template-columns:repeat(2,1fr);}}
+  .pillar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 14px;box-shadow:var(--sh);transition:transform .2s,border-color .2s;}
+  .pillar:hover{transform:translateY(-3px);border-color:var(--accent);}
+  .pillar.ia{background:var(--navy);border-color:var(--navy);}
+  .pillar .pi{font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-bottom:9px;}
+  .pillar.ia .pi{color:#b9a08e;}
+  .pillar .pt{font-size:14.5px;font-weight:600;line-height:1.25;color:var(--ink);}
+  .pillar.ia .pt{color:var(--bg);}
+  .pillar .pd{font-size:11.5px;color:var(--soft);margin-top:5px;line-height:1.4;}
+  .pillar.ia .pd{color:#b9a08e;}
+  .pillar .star{font-family:var(--mono);font-size:9px;color:var(--accent);margin-top:8px;display:block;}
+
+  /* ===== bloc explicatif de l'outil ===== */
+  .explain{margin-top:34px;padding:26px;background:var(--card-2);border:1px solid var(--line);border-radius:20px;}
+  .explain .ex-head{margin-bottom:12px;}
+  .explain .ex-tag{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px;}
+  .explain .ex-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(21px,3.6vw,27px);letter-spacing:-.5px;color:var(--navy);line-height:1.15;}
+  .explain .ex-lead{font-size:14.5px;color:var(--soft);line-height:1.55;max-width:560px;margin-bottom:20px;}
+  .explain .ex-lead b{color:var(--ink);font-weight:600;}
+  .explain .ex-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+  @media(max-width:620px){.explain .ex-grid{grid-template-columns:1fr;gap:10px;}}
+  .explain .ex-item{display:flex;gap:12px;align-items:flex-start;}
+  .explain .exn{font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;background:var(--accent);width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none;margin-top:1px;}
+  .explain .ext b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .explain .ext span{font-size:12px;color:var(--soft);line-height:1.4;}
+  .explain .ex-foot{font-family:var(--mono);font-size:11px;color:var(--mut);border-top:1px solid var(--line);padding-top:14px;line-height:1.6;}
+
+  /* ===== MATCHER ===== */
+  .matcher{margin-top:34px;background:var(--card);border:1px solid var(--line-2);border-radius:22px;padding:26px;box-shadow:var(--sh-lg);}
+  .matcher .mh{text-align:center;margin-bottom:18px;}
+  .matcher .mh .mt{font-family:var(--serif);font-size:24px;letter-spacing:-.5px;color:var(--navy);}
+  .matcher .mh .mt em{font-style:italic;color:var(--accent);}
+  .matcher .mh .ms{font-size:13.5px;color:var(--soft);margin-top:6px;max-width:440px;margin-left:auto;margin-right:auto;}
+  textarea{width:100%;min-height:130px;resize:vertical;background:var(--card-2);border:1px solid var(--line-2);border-radius:14px;padding:15px;font-family:var(--sans);font-size:14px;color:var(--ink);line-height:1.5;transition:border-color .2s,box-shadow .2s;}
+  textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px #b5512f14;}
+  textarea::placeholder{color:var(--mut);}
+  #who{width:100%;margin-top:10px;background:var(--card-2);border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;font-family:var(--sans);font-size:13.5px;color:var(--ink);transition:border-color .2s,box-shadow .2s;}
+  #who:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px #b5512f14;}
+  #who::placeholder{color:var(--mut);}
+  .runbar{text-align:center;margin-top:14px;}
+  .btn{font-family:var(--mono);font-size:13.5px;letter-spacing:.4px;text-decoration:none;border:none;border-radius:10px;padding:15px 36px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;transition:transform .12s,box-shadow .2s,background .2s;}
+  .btn.go{background:var(--accent);color:#fff;box-shadow:0 10px 28px #b5512f30;font-weight:600;}
+  .btn.go:hover{transform:translateY(-3px);background:var(--accent-deep);box-shadow:0 14px 34px #b5512f3d;}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+  .analyzing{display:none;text-align:center;padding:30px 0 6px;}
+  .analyzing.show{display:block;}
+  .dots{display:flex;gap:7px;justify-content:center;}
+  .dots span{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:bl 1s ease-in-out infinite;}
+  .dots span:nth-child(2){animation-delay:.15s;}.dots span:nth-child(3){animation-delay:.3s;}
+  @keyframes bl{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+  .hearts{display:flex;gap:9px;justify-content:center;}
+  .hearts span{color:var(--accent);font-size:20px;animation:hb 1.1s ease-in-out infinite;opacity:.4;}
+  .hearts span:nth-child(2){animation-delay:.18s;}.hearts span:nth-child(3){animation-delay:.36s;}
+  @keyframes hb{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+  .analyzing .txt{font-family:var(--mono);font-size:12px;color:var(--soft);margin-top:12px;}
+
+  /* timeline compacte */
+  .story{margin-top:30px;padding:4px 2px;}
+  .story .sh{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mut);text-align:center;margin-bottom:18px;}
+
+  /* ===== frise synthétique alignée ===== */
+  .tl5{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;box-shadow:var(--sh);}
+  .tl5-row{display:grid;grid-template-columns:74px 1fr;align-items:center;gap:12px;}
+  .tl5-lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;text-align:right;}
+  .tl5-row.edu .tl5-lab{color:var(--blue);}
+  .tl5-row.pro .tl5-lab{color:var(--accent-deep);}
+  .tl5-items{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+  .tl5-axis{height:0;border-top:1px dashed var(--line-2);margin:14px 0 14px 86px;}
+  .tl5-items .it{text-align:center;position:relative;padding-top:16px;min-width:0;}
+  .tl5-items .it.spacer{padding:0;}
+  .tl5-items .it .d{position:absolute;top:0;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;}
+  .tl5-row.edu .it .d{background:var(--blue);}
+  .tl5-row.pro .it .d{background:var(--accent);}
+  .tl5-items .it.now .d{box-shadow:0 0 0 3px var(--accent-soft);}
+  .tl5-row.edu .it.now .d{box-shadow:0 0 0 3px #3f5a7d1f;}
+  .tl5-items .it em{display:block;font-family:var(--mono);font-style:normal;font-size:9px;color:var(--mut);margin-bottom:3px;}
+  .tl5-items .it b{display:block;font-size:11.5px;color:var(--ink);line-height:1.2;}
+  .tl5-items .it i{display:block;font-style:normal;font-size:10px;color:var(--soft);margin-top:1px;line-height:1.2;}
+  @media(max-width:640px){
+    .tl5-row{grid-template-columns:1fr;gap:6px;}
+    .tl5-lab{text-align:left;}
+    .tl5-axis{display:none;}
+    .tl5-items{grid-template-columns:1fr 1fr;gap:12px 8px;}
+    .tl5-items .it.spacer{display:none;}
+    .tl5-items .it{text-align:left;padding-top:14px;}
+    .tl5-items .it .d{left:0;transform:none;}
+    .tl5-row.pro{margin-top:14px;}
+  }
+
+  /* ===== ÉCRAN 2 : résultat ===== */
+  .result{display:none;margin-top:28px;}
+  .result.show{display:block;animation:rise .5s ease both;}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .matchbanner{text-align:center;padding:26px 22px;border-radius:20px;background:var(--navy);color:#f4f1ea;margin-bottom:18px;display:none;box-shadow:var(--sh-lg);border:1px solid #ffffff12;}
+  .matchbanner.show{display:block;animation:pop .55s cubic-bezier(.2,1.3,.5,1) both;}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+  .matchbanner .im{font-family:var(--serif);font-size:30px;letter-spacing:-.5px;margin-bottom:6px;color:#fff;}
+  .matchbanner .sub{font-size:13.5px;opacity:.85;max-width:380px;margin:0 auto;}
+  .nomatch{text-align:center;padding:26px 22px;border-radius:20px;background:var(--card);border:1px solid var(--line-2);margin-bottom:18px;display:none;box-shadow:var(--sh);}
+  .nomatch.show{display:block;}
+  .nomatch .h{font-family:var(--serif);font-size:24px;margin-bottom:6px;color:var(--navy);}
+  .nomatch .h em{font-style:italic;color:var(--gold);}
+  .nomatch .s{font-size:13.5px;color:var(--soft);max-width:400px;margin:0 auto;}
+
+  .scorecard{background:var(--card);border:1px solid var(--line-2);border-radius:22px;padding:24px;box-shadow:var(--sh-lg);}
+  .ringwrap{display:flex;justify-content:center;margin:2px 0 8px;}
+  .ringwrap svg{width:158px;height:158px;}
+  .rt{fill:none;stroke:var(--bg-2);stroke-width:13;}
+  .rf{fill:none;stroke:var(--accent);stroke-width:13;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.7,.2,1);}
+  .rp{font-family:var(--serif);font-size:40px;fill:var(--navy);}
+  .rs{font-family:var(--mono);font-size:8px;fill:var(--mut);letter-spacing:1.5px;}
+  .verdict{text-align:center;margin-bottom:6px;}
+  .verdict .vh{font-family:var(--serif);font-size:22px;color:var(--navy);}
+  .verdict .vh em{font-style:italic;color:var(--accent);}
+  .verdict .vd{font-size:13px;color:var(--soft);max-width:400px;margin:6px auto 0;}
+  .subs{display:flex;gap:8px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap;}
+  .subs .s{background:var(--card-2);border:1px solid var(--line-2);border-radius:14px;padding:9px 15px;text-align:center;}
+  .subs .s .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);}
+  .subs .s .v{font-family:var(--serif);font-size:20px;color:var(--accent);margin-top:2px;}
+
+  .alert{background:#c08a3e14;border:1px solid #c08a3e44;border-left:3px solid var(--gold);border-radius:14px;padding:14px 16px;font-size:13px;color:#8a6420;line-height:1.5;margin:14px 0;}
+  .grp{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:18px 0 4px;display:flex;align-items:center;gap:10px;}
+  .grp::after{content:"";flex:1;height:1px;background:var(--line);}
+  .fold{border:1px solid var(--line);border-radius:14px;margin-top:12px;overflow:hidden;background:var(--card-2);}
+  .fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:15px 17px;user-select:none;transition:background .15s;}
+  .fold summary::-webkit-details-marker{display:none;}
+  .fold summary:hover{background:var(--bg-2);}
+  .fold .fl{font-family:var(--serif);font-size:16px;color:var(--navy);font-weight:600;}
+  .fold .fc{font-family:var(--mono);font-size:10.5px;color:var(--soft);flex:1;}
+  .fold .chev{font-size:20px;color:var(--accent);transition:transform .25s;line-height:1;}
+  .fold[open] .chev{transform:rotate(90deg);}
+  .fold .foldbody{padding:0 17px 8px;border-top:1px solid var(--line);}
+  .fold[open] summary{background:var(--bg-2);}
+  .row{display:grid;grid-template-columns:26px 1fr auto;gap:11px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line);opacity:0;transform:translateX(-8px);transition:opacity .4s,transform .4s;}
+  .row.lit{opacity:1;transform:none;}.row:last-child{border-bottom:none;}
+  .row .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:700;flex:none;margin-top:1px;}
+  .row.yes .ic{background:var(--sage);color:#fff;}.row.mid .ic{background:var(--gold);color:#fff;}.row.no .ic{background:var(--bg-2);color:var(--mut);border:1px solid var(--line-2);}
+  .row .m .t{font-size:14.5px;font-weight:600;color:var(--ink);}
+  .row .m .w{font-size:12.5px;color:var(--soft);margin-top:2px;}
+  .row .m .w b{color:var(--accent);font-weight:600;}
+  .row .lv{font-family:var(--mono);font-size:9px;letter-spacing:.3px;padding:4px 9px;border-radius:99px;white-space:nowrap;align-self:center;}
+  .lv.v3{background:var(--sage-bg);color:var(--sage);border:1px solid #4f8c6b44;}
+  .lv.v2{background:#c08a3e18;color:#a9761f;border:1px solid #c08a3e44;}
+  .lv.v1{background:#3f5a7d18;color:#3f5a7d;border:1px solid #3f5a7d40;}
+  .lv.v0{background:var(--bg-2);color:var(--mut);border:1px solid var(--line-2);}
+
+  /* contact */
+  .contactcard{margin-top:18px;border-radius:20px;overflow:hidden;position:relative;box-shadow:var(--sh);}
+  .contactcard.locked .inner{filter:blur(9px);opacity:.45;pointer-events:none;user-select:none;}
+  .lockmsg{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;font-family:var(--mono);font-size:12px;color:var(--soft);padding:20px;text-align:center;}
+  .contactcard.locked .lockmsg{display:flex;}
+  .lockmsg .lk{font-size:24px;}
+  .contactcard .inner{background:var(--navy);padding:26px;text-align:center;transition:filter .5s,opacity .5s;}
+  .contactcard .inner h3{font-family:var(--serif);font-size:23px;color:#fff;margin-bottom:4px;}
+  .contactcard .inner p{font-size:13px;color:#fff;opacity:.85;margin-bottom:18px;}
+  .cbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .cbtn{font-family:var(--mono);font-size:12.5px;text-decoration:none;background:var(--accent);color:#fff;border-radius:8px;padding:12px 20px;font-weight:600;transition:transform .12s,background .2s;}
+  .cbtn:hover{transform:translateY(-2px);background:var(--accent-deep);}
+  .cbtn.out{background:transparent;border:1.5px solid #ffffff44;color:#fff;}
+
+  /* portfolio — révélé après analyse */
+  .proofs{display:none;margin-top:36px;}
+  .proofs.show{display:block;animation:rise .6s ease both;}
+  .proofs .pfh{text-align:center;margin-bottom:6px;}
+  .proofs .pfh .pk{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);}
+  .proofs .pfh h2{font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:-.5px;color:var(--navy);margin-top:6px;}
+  .proofs .pfh p{font-size:13px;color:var(--soft);max-width:440px;margin:8px auto 24px;}
+  .proofs .pfh p b{color:var(--accent);font-weight:600;}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px;margin-bottom:12px;box-shadow:var(--sh);transition:transform .2s,box-shadow .2s;}
+  .pcard:hover{transform:translateY(-3px);box-shadow:var(--sh-lg);}
+  .pcard .ph{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .pcard h3{font-size:16.5px;font-weight:700;color:var(--ink);}
+  .pcard .bdg{font-family:var(--mono);font-size:8.5px;letter-spacing:.5px;padding:3px 9px;border-radius:99px;text-transform:uppercase;}
+  .bdg.prod{background:var(--sage-bg);color:var(--sage);border:1px solid #4f8c6b44;}
+  .bdg.win{background:#b5512f14;color:var(--accent-deep);border:1px solid #b5512f40;}
+  .bdg.pub{background:#c08a3e18;color:#a9761f;border:1px solid #c08a3e44;}
+  .bdg.wip{background:#3f5a7d18;color:#3f5a7d;border:1px solid #3f5a7d40;}
+  .bdg.ia{background:var(--navy);color:var(--bg);border:1px solid var(--navy);}
+  .pcard .pd{font-size:13px;color:var(--soft);margin-bottom:10px;}
+  .pcard .pd b{color:var(--accent);font-weight:600;}
+  .pcard .ctx{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--mut);margin-bottom:7px;}
+  .pcard .ctx b{color:var(--soft);font-weight:600;}
+  .pcard .st{display:flex;flex-wrap:wrap;gap:5px;}
+  .pcard .st span{font-family:var(--mono);font-size:9.5px;background:var(--card-2);border:1px solid var(--line-2);border-radius:6px;padding:3px 8px;color:var(--mut);}
+
+  footer{text-align:center;padding:34px 0 50px;font-family:var(--mono);font-size:10px;color:var(--mut);}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div class="wrap">
+
+  <div class="top">
+    <div class="logo"><span class="mono">EO</span> ortis_elsa · matching</div>
+    <div class="av"><span class="d"></span> en recherche · disponible sept. 2026</div>
+  </div>
+
+  <!-- ===== ÉCRAN 1 ===== -->
+  <header class="hero">
+    <div class="kick rv">Disponible sept. 2026 · CDI / VIE · Marseille &amp; mobilité</div>
+    <h1 class="rv">ORTIS Elsa</h1>
+    <div class="rotor rv"><span class="rfix">Je suis</span> <span class="rword" id="rword">Data&nbsp;Analyst&nbsp;junior</span></div>
+
+  </header>
+
+  <div class="pillars rv">
+    <div class="pillar"><div class="pi">Le socle</div><div class="pt">Data &amp; BI</div><div class="pd">SQL, Python, dashboards en production, KPI de pilotage</div></div>
+    <div class="pillar ia"><div class="pi">Ma signature</div><div class="pt">IA &amp; Data Science</div><div class="pd">Agents Copilot, scoring, modèles ML, automatisation</div><span class="star">★ expertise différenciante</span></div>
+    <div class="pillar"><div class="pi">L'écosystème</div><div class="pt">Microsoft 365</div><div class="pd">Excel avancé, Power Platform, Copilot Studio</div></div>
+    <div class="pillar"><div class="pi">Le combo rare</div><div class="pt">Gestion &amp; Finance</div><div class="pd">Pilotage de projet, comptabilité, conformité RGPD</div></div>
+  </div>
+
+  <div class="explain rv">
+    <div class="ex-head">
+      <span class="ex-tag">l'outil que vous avez sous les yeux</span>
+      <h2>Un moteur de matching. Que j'ai codé moi-même.</h2>
+    </div>
+    <p class="ex-lead">Plutôt qu'un CV que vous devez décortiquer, j'ai construit l'inverse&nbsp;: un outil qui <b>confronte votre offre à mon profil</b> et calcule, critère par critère, à quel point je corresponds.</p>
+    <div class="ex-grid">
+      <div class="ex-item"><div class="exn">01</div><div class="ext"><b>Vous renseignez votre besoin</b><span>Collez l'annonce, ou listez compétences et profil recherchés.</span></div></div>
+      <div class="ex-item"><div class="exn">02</div><div class="ext"><b>Le moteur analyse, sans complaisance</b><span>Il note compétences, profil et savoir-être — et signale honnêtement là où je ne corresponds pas.</span></div></div>
+      <div class="ex-item"><div class="exn">03</div><div class="ext"><b>Vous obtenez un verdict argumenté</b><span>Un score, le détail des correspondances, et mes coordonnées si l'on matche.</span></div></div>
+    </div>
+    <p class="ex-foot">Ce moteur de scoring est lui-même une démonstration&nbsp;: c'est exactement le type d'outil data que je conçois au quotidien.</p>
+  </div>
+
+  <div class="matcher rv">
+    <div class="mh">
+      <div class="mt">Évaluons notre <em>compatibilité</em></div>
+      <div class="ms">Renseignez votre fiche de poste, ou les compétences recherchées. Le moteur confronte vos critères à mon parcours, sans complaisance.</div>
+    </div>
+    <textarea id="jd" placeholder="Collez ici votre fiche de poste, ou listez ce que vous cherchez : missions, compétences (SQL, Power BI, Copilot, IA…), outils, anglais, mobilité, type de contrat… Plus c'est détaillé, plus l'analyse est précise."></textarea>
+    <input id="who" type="text" maxlength="40" placeholder="Votre prénom ou entreprise (optionnel)" autocomplete="off" />
+    <div class="runbar"><button class="btn go" id="go">Lancer l'analyse&nbsp;&nbsp;→</button></div>
+    <div class="analyzing" id="analyzing"><div class="hearts"><span>♥</span><span>♥</span><span>♥</span></div><div class="txt" id="anatxt">analyse de votre offre…</div></div>
+  </div>
+
+  <!-- frise synthétique -->
+  <div class="story rv">
+    <div class="sh">le parcours en un coup d'œil</div>
+    <div class="tl5">
+      <div class="tl5-row edu">
+        <span class="tl5-lab">Formation</span>
+        <div class="tl5-items">
+          <div class="it"><span class="d"></span><em>2019–22</em><b>Bachelor Banque &amp; Finance</b><i>KEDGE</i></div>
+          <div class="it spacer"></div>
+          <div class="it spacer"></div>
+          <div class="it spacer"></div>
+          <div class="it now"><span class="d"></span><em>2024–26</em><b>M2 Data Analytics</b><i>INSEEC</i></div>
+        </div>
+      </div>
+      <div class="tl5-axis"></div>
+      <div class="tl5-row pro">
+        <span class="tl5-lab">Expérience</span>
+        <div class="tl5-items">
+          <div class="it"><span class="d"></span><em>2021</em><b>RH Expert</b><i>Comptabilité</i></div>
+          <div class="it"><span class="d"></span><em>2021–22</em><b>SMC</b><i>Banque privée</i></div>
+          <div class="it"><span class="d"></span><em>2023</em><b>Décathlon</b><i>Retail data-driven</i></div>
+          <div class="it"><span class="d"></span><em>2023–24</em><b>Australie</b><i>Management</i></div>
+          <div class="it now"><span class="d"></span><em>2024–26</em><b>Kampus</b><i>Data &amp; RAF</i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN 2 : résultat ===== -->
+  <div class="result" id="result">
+    <div class="matchbanner" id="banner"><div class="im">Compatibilité confirmée</div><div class="sub" id="bannersub"></div></div>
+    <div class="nomatch" id="nomatch"><div class="h" id="nomatchh"></div><div class="s" id="nomatchs"></div></div>
+
+    <div class="scorecard">
+      <div class="ringwrap">
+        <svg viewBox="0 0 158 158" role="img" aria-label="Taux de compatibilité">
+          <circle class="rt" cx="79" cy="79" r="63"></circle>
+          <circle class="rf" id="rf" cx="79" cy="79" r="63" transform="rotate(-90 79 79)"></circle>
+          <text class="rp" id="rp" x="79" y="83" text-anchor="middle">0%</text>
+          <text class="rs" x="79" y="102" text-anchor="middle">COMPATIBILITÉ</text>
+        </svg>
+      </div>
+      <div class="verdict"><div class="vh" id="verdict"></div><div class="vd" id="verdictd"></div></div>
+      <div class="subs" id="subs"></div>
+      <div id="breakdown"></div>
+    </div>
+
+    <div class="contactcard locked" id="contactcard">
+      <div class="lockmsg" id="lockmsg"><span class="lk">🔒</span><span id="lockt"></span></div>
+      <div class="inner">
+        <h3>Échangeons.</h3>
+        <p>Si ce profil correspond à votre besoin, je serai ravie d'en discuter.</p>
+        <div class="cbtns">
+          <a class="cbtn" id="ml" href="mailto:elsa.ortis@kedgebs.com?subject=Opportunit%C3%A9%20data%20%E2%80%94%20ORTIS%20Elsa">✉ Me contacter</a>
+          <a class="cbtn out" id="lk" href="https://www.linkedin.com/in/elsa-ortis-data" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="cbtn out" id="cv" href="cv.pdf" target="_blank" rel="noopener">Mon CV</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO révélé -->
+    <div class="proofs" id="proofs">
+      <div class="pfh">
+        <div class="pk">la preuve par les faits</div>
+        <h2>Ce qui fonde cette évaluation</h2>
+        <p>Le score reflète l'ensemble de mon profil — formation, parcours et savoir-être. Il s'appuie <b>en partie sur ces réalisations</b>, conçues et livrées de bout en bout.</p>
+      </div>
+      <div class="pcard"><div class="ph"><h3>Agents IA via Copilot Studio</h3><span class="bdg ia">IA · en prod</span></div><p class="pd"><span class="ctx"><b>Cadre professionnel</b> · Kampus Training, organisme de formation</span>Conception d'<b>agents conversationnels via Copilot Studio</b> dans l'écosystème Microsoft 365 — automatisation de tâches et assistance métier, intégrés aux outils de l'entreprise.</p><div class="st"><span>Copilot Studio</span><span>Microsoft 365</span><span>Power Platform</span><span>Automatisation</span></div></div>
+      <div class="pcard"><div class="ph"><h3>Agent de scoring &amp; prospection (SIRET INSEE)</h3><span class="bdg ia">IA · en prod</span></div><p class="pd"><span class="ctx"><b>Cadre professionnel</b> · Kampus Training, organisme de formation</span><b>Score la base SIRET de l'INSEE</b> pour générer des listes de prospection qualifiées aux commerciaux : filtrage, scoring de pertinence, génération d'outreach par IA. De la donnée publique au livrable business.</p><div class="st"><span>Python</span><span>FastAPI</span><span>Scoring</span><span>LLM</span><span>Open Data INSEE</span></div></div>
+      <div class="pcard"><div class="ph"><h3>Dashboard de pilotage</h3><span class="bdg prod">en prod 2025</span></div><p class="pd"><span class="ctx"><b>Cadre professionnel</b> · Kampus Training, organisme de formation</span>App full-stack <b>from scratch</b> (API GraphQL Digiforma). A <b>remplacé 5 fichiers Excel</b>, 8 KPI temps réel sur 8 onglets. Back &amp; front, seule.</p><div class="st"><span>Python</span><span>FastAPI</span><span>React</span><span>GraphQL</span><span>SQL</span></div></div>
+      <div class="pcard"><div class="ph"><h3>Qui parle au JT ?</h3><span class="bdg win">🏆 finaliste nationale</span></div><p class="pd"><span class="ctx"><b>Initiative personnelle</b> · concours Open Data University, inscription volontaire</span>Observatoire de la parole des femmes dans les JT, <b>80 445 h analysées par IA</b>. Modèle Ridge + dashboard, <b>publié sur data.gouv.fr</b>, finaliste Open Data University S4.</p><div class="st"><span>Ridge</span><span>Scikit-learn</span><span>NLP</span><span>D3.js</span></div></div>
+      <div class="pcard"><div class="ph"><h3>E-learning « Fondamentaux de l'IA »</h3><span class="bdg pub">lancé</span></div><p class="pd"><span class="ctx"><b>Cadre professionnel</b> · Kampus Training, organisme de formation</span>J'ai <b>lancé l'activité e-learning de zéro</b> : 4 modules certifiés Qualiopi, scripts et contenu, mise en prod et en vente. <b>Cheffe de projet, tout est de moi.</b></p><div class="st"><span>Chefferie projet</span><span>Conception</span><span>IA</span><span>Qualiopi</span></div></div>
+      <div class="pcard"><div class="ph"><h3>Gestion administrative &amp; financière</h3><span class="bdg prod">2024–26</span></div><p class="pd"><span class="ctx"><b>Cadre professionnel</b> · Kampus Training, organisme de formation</span>En parallèle de la data : <b>toute la gestion d'un OF Qualiopi</b> — conventions, contrats, <b>clôtures comptables</b>, rentabilité. J'ai aussi <b>mené les audits de renouvellement de la certification Qualiopi</b>. Profil hybride et fiable.</p><div class="st"><span>Finance</span><span>Compta</span><span>Audit Qualiopi</span><span>RGPD</span></div></div>
+    </div>
+  </div>
+
+  <footer>Conçu &amp; codé par ORTIS Elsa — moteur de matching maison, sans framework. Prouver, c'est mieux que dire.</footer>
+</div>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+  var UNLOCK=60;
+
+  // métier rotatif
+  var ROLES=['Data Analyst junior','orientée métier','prête pour la suite'];
+  var rword=document.getElementById('rword'), ri=0;
+  if(rword){ setInterval(function(){ rword.classList.add('out'); setTimeout(function(){ ri=(ri+1)%ROLES.length; rword.innerHTML=ROLES[ri].replace(/ /g,'&nbsp;'); rword.classList.remove('out'); },350); },2400); }
+
+  var SKILLS=[
+    {id:'sql',kw:['sql','requ','base de don','sgbd'],lvl:3,w:1.2,label:"SQL & requêtage",why:"Au quotidien : extractions, jointures et agrégations pour alimenter mes tableaux de bord, depuis l'API GraphQL Digiforma."},
+    {id:'py',kw:['python','pandas','numpy','programmation'],lvl:3,w:1.1,label:"Python",why:"Mon langage principal : backend de mes applications, agents IA, et traitement de données massives sur le projet ODU."},
+    {id:'dash',kw:['dashboard','tableau de bord','dataviz','visualis','reporting','restitution'],lvl:3,w:1.2,label:"Dashboards & dataviz",why:"J'ai remplacé 5 fichiers Excel par un dashboard temps réel que la direction Kampus consulte chaque semaine — 8 KPI, 8 onglets métier."},
+    {id:'ia',kw:[' ia ',' ia,',' ia.',"l'ia",'intelligence artificielle','machine learning','llm','gpt','genai','générative','deep learning','nlp'],lvl:2,w:1.1,label:"IA appliquée",why:"Agents conçus sur Copilot Studio, agent de scoring SIRET pour les commerciaux, régression Ridge sur l'ODU, mémoire M2 sur les compétences IA."},
+    {id:'ms365',kw:['microsoft 365','office 365','microsoft office','excel','sharepoint','power query','tcd','suite office'],lvl:3,w:1.0,label:"Microsoft 365 & Excel avancé",why:"Excel avancé (TCD, Power Query) au quotidien sur le pilotage financier de Kampus, dans un environnement Microsoft 365 complet."},
+    {id:'copilot',kw:['copilot','copilot studio','agent ia','agent conversationnel','assistant ia','chatbot'],lvl:2,w:1.0,label:"Agents IA / Copilot Studio",why:"J'ai conçu des agents conversationnels sur Copilot Studio, plus un agent de prospection codé en FastAPI de A à Z."},
+    {id:'web',kw:['web analytics','ga4','google analytics','trafic','audience','tracking'],lvl:3,w:1.0,label:"Web Analytics",why:"Analyse d'audience à grande échelle sur le projet ODU — 80 445h de contenu traitées pour mesurer le temps de parole."},
+    {id:'crm',kw:['crm','ciblage','segmentation','campagne','marketing automation','data marketing','prospection','gestion de la relation client','base clients'],lvl:3,w:1.1,label:"CRM & qualité des données clients",why:"J'administre notre CRM <b>Digiforma</b> au quotidien : maintenance, <b>automatisation et mise en place de process</b>, et fiabilité des données. J'ai aussi conçu un agent de scoring SIRET pour la prospection."},
+    {id:'mkt',kw:['marketing','acquisition','roi','test & learn','growth','e-commerce','consommateur'],lvl:2,w:0.9,label:"Marketing & performance",why:"Chez Décathlon, je pilotais l'assortiment par la donnée de vente : taux de transformation, rotation des stocks, mise en avant produit."},
+    {id:'build',kw:['api','fastapi','graphql','react','full-stack','back-end','front-end'],lvl:3,w:1.0,label:"Build : API & full-stack",why:"Dashboard et agent de prospection codés seule, du backend FastAPI à l'interface React, connectés en GraphQL."},
+    {id:'kpi',kw:['kpi','indicateur','pilotage','tendance','anomalie'],lvl:3,w:1.0,label:"Analyse & pilotage KPI",why:"Je définis et restitue les indicateurs qui orientent les décisions de la direction : rentabilité par formation, par commercial, par marché."},
+    {id:'gov',kw:['rgpd','gdpr','conformité','gouvernance','confidentialité','sécurité des données','open data','qualité des données','structuration'],lvl:3,w:0.9,label:"Gouvernance & qualité data",why:"Je gère la conformité RGPD d'un organisme de formation : durées de conservation, traitement des données stagiaires, registre des traitements."},
+    {id:'proj',kw:['gestion de projet','chef de projet','cheffe de projet','agile','scrum','coordination','transverse','amélioration continue'],lvl:3,w:1.0,label:"Gestion de projet",why:"J'ai piloté seule le lancement de l'offre e-learning de Kampus : cadrage, conception des contenus, mise en production et commercialisation."},
+    {id:'fin',kw:['finance','comptab','rentabilité','budget','clôture','contrôle de gestion','impact financier'],lvl:2,w:0.9,label:"Finance & comptabilité",why:"En tant que responsable administrative et financière, je porte la clôture comptable et le suivi de rentabilité — un volet finance rare pour un profil data."},
+    {id:'admin',kw:['administratif','contrat','convention','qualiopi','polyvalent','back-office'],lvl:2,w:0.8,label:"Gestion administrative",why:"Je pilote l'administratif complet d'un organisme certifié Qualiopi : conventions, contrats clients et formateurs, conformité réglementaire."}
+  ];
+  var SPECIFIC=[
+    {id:'powerbi',kw:['power bi','powerbi','power-bi'],lvl:1,w:1.2,label:"Power BI",why:"Je code surtout mes dashboards <b>sur-mesure (D3/React)</b> ; Power BI en notions. Pris en main vite — mais pas encore mon terrain principal."},
+    {id:'powerapps',kw:['power apps','powerapps','power automate','power platform'],lvl:1,w:1.0,label:"Power Apps / Power Automate",why:"Notions sur la <b>Power Platform</b> ; je connais la logique (j'utilise Copilot Studio), montée rapide."},
+    {id:'predict',kw:['modèle prédictif','modèles prédictifs','prédict','turnover','forecast'],lvl:1,w:1.2,label:"Modélisation prédictive",why:"Formée (Stats, Scoring, Data Mining) + Ridge sur l'ODU — le prédictif <b>en prod</b> est un axe de progression assumé."},
+    {id:'sirh',kw:['sirh','si rh','migration sirh'],lvl:0,w:1.1,label:"SIRH / systèmes RH",why:"Pas travaillé sur des SIRH — mais la <b>logique de migration et qualité de données</b> m'est familière."},
+    {id:'saspbi',kw:['sas','spss'],lvl:0,w:1.0,label:"SAS / SPSS",why:"Pas pratiqué — l'<b>équivalent Python / scikit-learn</b> est dans mon socle."},
+    {id:'cloud',kw:['snowflake','databricks','dbt','airflow','spark','bigquery'],lvl:0,w:1.0,label:"Cloud / orchestration",why:"Pas encore pratiqué ; culture Big Data et je construis déjà mes pipelines."},
+    {id:'datagov',kw:['data governance','data steward','stewardship','data office','gouvernance des données','gouvernance de la donnée','data management','data assessment','data usage','catalogue de données'],lvl:2,w:1.3,label:"Data Governance & Stewardship",why:"J'ai des <b>bases solides</b> en gouvernance (RGPD, qualité et structuration des données chez Kampus), mais je n'ai pas encore tenu un rôle dédié de Data Steward dans un Data Office — un poste sur lequel je monterais avec plaisir."},
+    {id:'datagalaxy',kw:['data galaxy','datagalaxy','collibra','informatica','talend','alation'],lvl:0,w:1.1,label:"Outils de gouvernance (Data Galaxy, Collibra…)",why:"Je n'ai pas pratiqué ces catalogues de données spécialisés — mais j'en comprends la logique et je les prends en main vite."},
+    {id:'plm',kw:['plm','product lifecycle','lifecycle management'],lvl:0,w:1.0,label:"PLM (Product Lifecycle Management)",why:"Domaine que je n'ai pas pratiqué ; à découvrir, mais transposable depuis ma culture data et processus."}
+  ];
+  var SECTORS_WEAK=[
+    {kw:['ressources humaines',' rh ','rh,','indicateurs rh','sirh','gestion du personnel'],label:"domaine RH"},
+    {kw:[' santé ','hospitalier','médical','établissement de soin'],label:"domaine santé"},
+    {kw:[' usine ','manufacturing',' industriel'],label:"domaine industriel"}
+  ];
+  var PROFILE=[
+    {id:'eng',kw:['anglais','english','bilingue','international'],strict:['bilingue','natif','native','c2'],lvl:2,w:1.0,label:"Anglais",okWhy:"Anglais <b>pro/opérationnel</b> — TOEIC 800 + un an en Australie.",strictWhy:"Anglais <b>pro/opérationnel</b> (TOEIC 800, Australie). Niveau natif exigé&nbsp;? On en parle — je progresse vite."},
+    {id:'mob',kw:['mobilité','déplacement','déplacements','mobile','terrain','national'],lvl:3,w:0.9,label:"Mobilité",okWhy:"Marseille + <b>grande mobilité France & international</b>."},
+    {id:'cdi',kw:['cdi','durée indéterminée'],lvl:3,w:1.0,label:"Contrat — CDI",okWhy:"<b>CDI</b> en priorité — alignés."},
+
+    {id:'av',kw:['septembre','rentrée','immédiat','2026'],lvl:3,w:0.7,label:"Disponibilité",okWhy:"Disponible <b>dès septembre 2026</b>."},
+    {id:'edu',kw:['bac+4','bac+5','master','m2','école','diplôme'],lvl:3,w:0.9,label:"Formation",okWhy:"<b>Bac+5 M2 Data Analytics (INSEEC)</b> + Bachelor KEDGE."},
+    {id:'exp',kw:['expérience','junior','2 ans','débutant'],lvl:2,w:0.8,label:"Expérience",okWhy:"<b>2 ans de data en prod</b> + banque, retail, international."}
+  ];
+  var PROFILE_NO=[
+    {kw:['stage','stagiaire'],label:"Stage",why:"Je cherche un <b>CDI (ou VIE)</b>, pas un stage."},
+    {kw:['alternance','apprentissage','contrat pro'],label:"Alternance",why:"Je termine mon alternance — je vise un <b>CDI / VIE</b>."},
+    {kw:['freelance','indépendant','prestataire'],label:"Freelance",why:"Je cherche un poste <b>salarié</b>."}
+  ];
+  var SOFT=[
+    {id:'cur',kw:['curio','veille','innovation'],lvl:3,w:0.7,label:"Curiosité",why:"Cette page, l'agent SIRET, le projet ODU : autant de choses que j'ai lancées de moi-même, pour apprendre."},
+    {id:'cre',kw:['créativ','création','design','force de proposition'],lvl:3,w:0.7,label:"Créativité",why:"J'ai imaginé un observatoire data primé au niveau national et conçu un produit e-learning qui n'existait pas."},
+    {id:'aut',kw:['autonom','initiative','débrouill'],lvl:3,w:0.8,label:"Autonomie",why:"Le dashboard, l'e-learning, les agents : menés seule, du cadrage à la livraison, sans qu'on me tienne la main."},
+    {id:'rig',kw:['rigueur','rigoureux','fiable','précision','qualité'],lvl:3,w:0.7,label:"Rigueur & fiabilité",why:"Je vérifie chaque chiffre avant de le publier : sur le projet ODU, j'ai repris l'ensemble des statistiques pour garantir leur fiabilité avant la finale."},
+    {id:'biz',kw:['business','métier','commercial','résultat','impact'],lvl:3,w:0.8,label:"Sens du business",why:"Mon réflexe : à quoi sert cette donnée pour le métier ? Né en banque et en retail, prolongé par l'agent SIRET pour les commerciaux."},
+    {id:'com',kw:['communication','relationnel','pédagog','présentation','équipe'],lvl:3,w:0.7,label:"Communication",why:"J'ai pitché en finale nationale, conçu un e-learning pour transmettre, et managé une équipe en Australie."},
+    {id:'ada',kw:['adaptab','polyvalent','flexib','changement'],lvl:2,w:0.6,label:"Adaptabilité",why:"Chez Kampus je passe de la data à la finance à l'admin dans la même journée — et j'ai travaillé dans 4 secteurs très différents."}
+  ];
+
+  var DATA_STRONG=['sql','python','dashboard','power bi','power apps','copilot','intelligence artificielle','machine learning','data analyst','data analysis','scikit','pandas','etl','graphql','fastapi','dataviz','data science','data mining','régression','kpi','tableau de bord','business intelligence','reporting','requête','base de données','modèle prédictif','scoring','web analytics','open data','crm','segmentation','data marketing','statistique','algorithme','microsoft 365','excel avancé','power query','data governance','data steward','gouvernance des données'];
+  var DATA_WEAK=['data','donnée','analyse','digital','marketing','finance','comptab','gestion de projet','automatisation','indicateur','tendance','excel','gouvernance'];
+  var NON_DATA=['enfant','crèche','puéricult','eje','bébé','nourrisson','soins','hygiène','bien-être de chaque','pédagogique','éducati','famille au travers','vae','auxiliaire','infirmi','patient','soignant','maçon','chantier','btp','serveur','vendeur en magasin','caissier','manutention','chauffeur','livreur','coiffure','esthétique','restauration','plombier','électricien','animateur','animatrice','périscolaire','assistante maternelle','aide-soignant'];
+
+  function domainCheck(text){
+    var strong=DATA_STRONG.filter(function(k){return text.indexOf(k)>-1;}).length;
+    var weak=DATA_WEAK.filter(function(k){return text.indexOf(k)>-1;}).length;
+    var nonData=NON_DATA.filter(function(k){return text.indexOf(k)>-1;}).length;
+    var relevance=strong*3+weak-nonData*4;
+    if(nonData>=2&&strong<2) return {inDomain:false,relevance:relevance};
+    if(strong===0) return {inDomain:false,relevance:relevance};
+    if(nonData>strong) return {inDomain:false,relevance:relevance};
+    return {inDomain:true,relevance:relevance,strong:strong};
+  }
+  function rawText(){return (document.getElementById('jd').value||"");}
+
+  // extraction légère : intitulé de poste + ville depuis l'annonce
+  var VILLES=['paris','lyon','marseille','toulouse','bordeaux','lille','nantes','strasbourg','montpellier','rennes','nice','grenoble','rouen','aix-en-provence','aix','sophia antipolis','la défense','nanterre','levallois','boulogne','remote','télétravail','full remote'];
+  var POSTES=['data analyst','business analyst','bi analyst','data scientist','data engineer','data steward','data manager','chef de projet data','analyste data','consultant data','ingénieur data','product owner data','analytics engineer','chargé d\'études','data governance','responsable data'];
+  function extractInfo(raw){
+    var t=" "+(raw||"").toLowerCase()+" ";
+    var poste=null;
+    for(var i=0;i<POSTES.length;i++){ if(t.indexOf(POSTES[i])>-1){ poste=POSTES[i]; break; } }
+    var ville=null;
+    for(var j=0;j<VILLES.length;j++){ if(t.indexOf(' '+VILLES[j])>-1||t.indexOf(VILLES[j]+' ')>-1){ ville=VILLES[j]; break; } }
+    function cap(s){return s? s.replace(/(^|[\s-])([a-zàâéèêîôûç])/g,function(m,p,c){return p+c.toUpperCase();}):s;}
+    return {poste:cap(poste), ville:ville==='remote'||ville==='télétravail'||ville==='full remote'?'en remote':cap(ville)};
+  }
+
+  function analyze(raw){
+    var text=" "+(raw||"").toLowerCase()+" ";
+    var dc=domainCheck(text);
+    if(!dc.inDomain){var sc=Math.max(Math.min(Math.round(20+dc.relevance),22),5);return {score:sc,offTopic:true};}
+    var L={3:100,2:80,1:55,0:25};
+    function occ(kws){var n=0;kws.forEach(function(k){var i=0;while((i=text.indexOf(k,i))>-1){n++;i+=k.length;}});return n;}
+    var ACT=['concevoir','développer','développe','maintenir','produire','construire','garantir','piloter','assurer','optimiser'];
+    function core(kws){if(occ(kws)>=2)return true;return kws.some(function(k){var i=text.indexOf(k);if(i<0)return false;var w=text.slice(Math.max(0,i-60),i+12);return ACT.some(function(v){return w.indexOf(v)>-1;});});}
+    var specHits=[]; SPECIFIC.forEach(function(s){if(s.kw.some(function(k){return text.indexOf(k)>-1;}))specHits.push({item:s,core:core(s.kw),occ:occ(s.kw)});});
+    var powerbiAsked=specHits.some(function(h){return h.item.id==='powerbi';});
+    var sHits=[]; SKILLS.forEach(function(d){if(d.id==='dash'&&powerbiAsked)return;if(d.kw.some(function(k){return text.indexOf(k)>-1;}))sHits.push({item:d,core:core(d.kw),occ:occ(d.kw),lvl:d.lvl,label:d.label,why:d.why});});
+    var pHits=[]; PROFILE.forEach(function(d){if(d.kw.some(function(k){return text.indexOf(k)>-1;}))pHits.push(d);});
+    var pNo=[]; PROFILE_NO.forEach(function(e){if(e.kw.some(function(k){return text.indexOf(k)>-1;}))pNo.push(e);});
+    var vague=false;
+    if(sHits.length===0&&specHits.length===0){var fb=['sql','dash','py','kpi'];fb.forEach(function(id){var d=SKILLS.filter(function(x){return x.id===id;})[0];if(d)sHits.push({item:d,core:false,occ:1,lvl:d.lvl,label:d.label,why:d.why});});vague=true;}
+    var sw=0,sv=0;
+    function addW(lvl,bw,c,o){var imp=(c?2.0:1.0)*(1+Math.min(o-1,2)*0.4);sw+=bw*imp;sv+=bw*imp*L[lvl];}
+    sHits.forEach(function(h){addW(h.lvl,h.item.w,h.core,h.occ);});
+    specHits.forEach(function(h){addW(h.item.lvl,h.item.w,h.core,h.occ);});
+    var skillScore=sw?Math.round(sv/sw):0;
+    var weakSector=null; SECTORS_WEAK.forEach(function(s){if(s.kw.some(function(k){return text.indexOf(k)>-1;}))weakSector=s.label;});
+    if(weakSector) skillScore=Math.round(skillScore*0.93);
+    // --- détection de séniorité (avant calcul, impacte le profil) ---
+    var SENIOR=['10 ans','8 ans','7 ans','15 ans','confirmé','senior','sénior','lead ','manager','directeur','director','head of','responsable d\'équipe','chef de service','expérimenté','encadrement','manager une équipe','diriger','dirigeras','animer des équipes','animation des équipes','pilotage de projets complexes'];
+    var seniorHits=SENIOR.filter(function(k){return text.indexOf(k)>-1;}).length;
+    var yearsMatch=text.match(/(\d+)\s*ans?/g);
+    var maxYears=0;
+    if(yearsMatch){yearsMatch.forEach(function(s){var n=parseInt(s,10);if(n>maxYears&&n<=40)maxYears=n;});}
+    var seniorPoste = seniorHits>=3 || maxYears>=6;
+    var seniorAlert=null, seniorFactor=1, seniorGap=null;
+    if(seniorPoste){
+      seniorAlert="Ce poste vise un profil expérimenté"+(maxYears>=6?" ("+maxYears+" ans attendus)":"")+". Je suis junior (2 ans d'expérience) : l'écart d'ancienneté est réel, mais mon autonomie et mes réalisations en production le compensent en partie.";
+      seniorFactor = maxYears>=10?0.42 : (maxYears>=8?0.5 : (maxYears>=6?0.58 : (seniorHits>=4?0.6:0.7)));
+      seniorGap = maxYears>=6?("Le poste demande "+maxYears+" ans d'expérience ; j'en ai 2. L'écart est réel — mais j'ai déjà mené en autonomie, de la conception à la production, des projets souvent confiés à des profils encadrés."):"Poste à dimension senior ou managériale ; je suis sur une trajectoire junior, avec une progression rapide.";
+    }
+
+    var pw=0,pv=0;
+    if(pHits.length===0) pHits=[PROFILE[2],PROFILE[5],PROFILE[4]];
+    pHits.forEach(function(d){pw+=d.w;pv+=d.w*L[d.lvl];});
+    pNo.forEach(function(e){pw+=2.2;pv+=2.2*12;});
+    var profScore=pw?Math.round(pv/pw):85;
+    if(seniorPoste){ profScore=Math.round(profScore*seniorFactor); }
+
+    var softMent=SOFT.filter(function(s){return s.kw.some(function(k){return text.indexOf(k)>-1;});}).length;
+    var softScore=Math.min(90+softMent*2,98);
+    var wS=0.55,wP=0.27,wF=0.18;
+    if(pNo.length>0){wS=0.4;wP=0.42;wF=0.18;}
+    if(seniorPoste){wP=0.4;wS=0.45;wF=0.15;}
+    var score=Math.round(skillScore*wS+profScore*wP+softScore*wF);
+    // plafond global aligné sur l'écart de séniorité (évite qu'un fort skill masque l'écart)
+    if(seniorPoste){ var scap=maxYears>=10?63:(maxYears>=8?64:(maxYears>=6?66:69)); score=Math.min(score,scap); }
+
+    var coreWeak=specHits.filter(function(h){return (h.core||h.item.lvl===0)&&h.item.lvl<=1;});
+    var coreCrit=specHits.filter(function(h){return (h.core||h.item.lvl===0)&&h.item.lvl===0;});
+    var alert=null;
+    if(coreWeak.length>=2||coreCrit.length>=1){
+      alert="Les missions centrales ("+coreWeak.map(function(h){return h.item.label;}).join(", ")+") tombent sur mes axes de progression. Je joue franc-jeu : voici ce que j'apporte à la place.";
+      var cap=coreWeak.length>=3?64:(coreWeak.length===2?72:80);
+      if(coreCrit.length>=2) cap=Math.min(cap,62);
+      score=Math.min(score,cap);
+    }
+    var strong=sHits.filter(function(d){return d.lvl>=2;}).length;
+    if(strong>=5&&!alert) score=Math.min(score+2,97);
+    var signal=dc.strong+sHits.length*2;
+    if(vague||signal<5) score=Math.min(score,58+signal*3);
+    score=Math.max(Math.min(score,97),30);
+    return {score:score,skillScore:skillScore,profScore:profScore,softScore:softScore,sHits:sHits,specHits:specHits,pHits:pHits,pNo:pNo,weakSector:weakSector,alert:alert,seniorAlert:seniorAlert,seniorGap:seniorGap,offTopic:false};
+  }
+
+  function verdict(s){
+    if(s>=88) return ["<em>Forte</em> compatibilité.","Compétences, profil et savoir-être alignés. Un échange s'impose."];
+    if(s>=75) return ["Compatibilité <em>solide</em>.","L'essentiel de votre besoin relève de mon coeur de métier."];
+    if(s>=UNLOCK) return ["Potentiel <em>réel</em>.","Plusieurs critères clés correspondent ; les écarts sont identifiés ci-dessous."];
+    return ["Correspondance <em>partielle</em>.","Le recouvrement est limité — le détail ci-dessous précise les points d'écart."];
+  }
+
+  var C=2*Math.PI*63, rf=document.getElementById('rf');
+  rf.style.strokeDasharray=C; rf.style.strokeDashoffset=C;
+  function rowHTML(cls,ic,label,why,lc,lt){return '<div class="row '+cls+'"><div class="ic">'+ic+'</div><div class="m"><div class="t">'+label+'</div><div class="w">'+why+'</div></div><div class="lv '+lc+'">'+lt+'</div></div>';}
+  function groupHTML(title,summary,rows,open){return '<details class="fold"'+(open?' open':'')+'><summary><span class="fl">'+title+'</span><span class="fc">'+summary+'</span><span class="chev">›</span></summary><div class="foldbody">'+rows+'</div></details>';}
+
+  // confettis sobres (couleurs de la page) pour les beaux matchs
+  function confetti(){
+    var cols=['#b5512f','#1c2430','#4f8c6b','#c08a3e'];
+    var N=44;
+    for(var i=0;i<N;i++){
+      var p=document.createElement('div');
+      p.style.cssText='position:fixed;top:-12px;z-index:9999;width:8px;height:8px;border-radius:1px;pointer-events:none;opacity:.9;';
+      p.style.left=(Math.random()*100)+'vw';
+      p.style.background=cols[i%cols.length];
+      p.style.transform='rotate('+(Math.random()*360)+'deg)';
+      document.body.appendChild(p);
+      var dur=2200+Math.random()*1400, dx=(Math.random()*120-60);
+      p.animate([{transform:p.style.transform+' translate(0,0)',opacity:.95},{transform:'translate('+dx+'px,102vh) rotate(540deg)',opacity:.2}],{duration:dur,easing:'cubic-bezier(.2,.6,.4,1)'});
+      (function(el,d){setTimeout(function(){el.remove();},d+60);})(p,dur);
+    }
+  }
+
+  function render(r){
+    var res=document.getElementById('result'); res.classList.add('show');
+    var proofs=document.getElementById('proofs');
+    var banner=document.getElementById('banner'), nomatch=document.getElementById('nomatch'), card=document.getElementById('contactcard');
+    banner.classList.remove('show'); nomatch.classList.remove('show');
+    rf.style.strokeDashoffset=C*(1-r.score/100);
+    rf.style.stroke=r.offTopic?'#92999f':(r.score>=UNLOCK?'var(--accent)':'var(--gold)');
+    var rp=document.getElementById('rp'),t0=null,dur=1200;
+    function step(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/dur,1);rp.textContent=Math.round(p*r.score)+'%';if(p<1)requestAnimationFrame(step);else rp.textContent=r.score+'%';}
+    requestAnimationFrame(step);
+    var subs=document.getElementById('subs'), bd=document.getElementById('breakdown'); subs.innerHTML=''; bd.innerHTML='';
+    if(r.offTopic){
+      var who0=(document.getElementById('who').value||"").trim();
+      nomatch.classList.add('show');
+      document.getElementById('nomatchh').innerHTML="Hors de mon <em>périmètre</em>.";
+      document.getElementById('nomatchs').textContent=(who0?who0+", ":"")+"mon expertise couvre la data, la BI, le marketing et la gestion. Ce poste en sort — mais si une dimension data existe, je reste ouverte à l'échange.";
+      document.getElementById('verdict').innerHTML=""; document.getElementById('verdictd').textContent="";
+      card.classList.add('locked'); document.getElementById('lockt').textContent="Coordonnées réservées aux offres data · ce poste est hors périmètre";
+      proofs.classList.remove('show');
+      setTimeout(function(){res.scrollIntoView({behavior:'smooth',block:'start'});},120); return;
+    }
+    var who=(document.getElementById('who').value||"").trim();
+    var whoPrefix = who? who+", " : "";
+    var info=extractInfo(rawText());
+    var ctx="";
+    if(info.poste&&info.ville) ctx="Pour un poste de "+info.poste+" "+info.ville+" : ";
+    else if(info.poste) ctx="Pour un poste de "+info.poste+" : ";
+    else if(info.ville) ctx="Pour ce poste "+info.ville+" : ";
+
+    var vt=verdict(r.score);
+    document.getElementById('verdict').innerHTML=vt[0]; document.getElementById('verdictd').textContent=ctx+vt[1];
+    if(r.score>=UNLOCK){
+      banner.classList.add('show');
+      document.getElementById('banner').querySelector('.im').textContent = who? (r.score>=88?"On matche, "+who+" !":"Joli match, "+who+" !") : "Compatibilité confirmée";
+      document.getElementById('bannersub').textContent=whoPrefix+(r.score>=88?"votre besoin et mon profil convergent nettement. Mes coordonnées sont débloquées ci-dessous.":"les bases d'une collaboration sont là. Mes coordonnées sont accessibles ci-dessous.");
+      card.classList.remove('locked');
+      if(r.score>=85) confetti();
+    } else { card.classList.add('locked'); document.getElementById('lockt').textContent="Coordonnées débloquées dès "+UNLOCK+"% — on n'y est pas tout à fait."; }
+    subs.innerHTML='<div class="s"><div class="k">Compétences</div><div class="v">'+r.skillScore+'%</div></div><div class="s"><div class="k">Profil</div><div class="v">'+r.profScore+'%</div></div><div class="s"><div class="k">Savoir-être</div><div class="v">'+r.softScore+'%</div></div>';
+    var L={3:['v3','maîtrisé'],2:['v2','solide'],1:['v1','en montée'],0:['v0','à discuter']};
+    var html='';
+    if(r.alert) html+='<div class="alert">⚠ '+r.alert+'</div>';
+    if(r.seniorAlert) html+='<div class="alert">⚠ '+r.seniorAlert+'</div>';
+
+    // --- groupe 1 : compétences ---
+    var g1='', n1=0, ok1=0;
+    r.specHits.forEach(function(h){var lvl=h.item.lvl;var cls=lvl>=2?'yes':(lvl===1?'mid':'no');var ic=lvl===0?'✕':(lvl===1?'↗':'✓');var l=L[lvl];g1+=rowHTML(cls,ic,h.item.label+(h.core?' · mission centrale':''),h.item.why,l[0],l[1]);n1++;if(lvl>=2)ok1++;});
+    r.sHits.forEach(function(h){var cls=h.lvl===3?'yes':'mid';var ic=h.lvl===1?'↗':'✓';var l=L[h.lvl];g1+=rowHTML(cls,ic,h.label,h.why,l[0],l[1]);n1++;if(h.lvl>=2)ok1++;});
+    if(r.weakSector){g1+=rowHTML('no','~','Secteur : '+r.weakSector,'Pas d\'expérience directe dans ce secteur — mais mes compétences data sont <b>transposables</b>.','v0','à discuter');n1++;}
+    var g1sum = r.seniorAlert ? "des atouts techniques réels — mais ce poste valorise d'abord l'expérience de pilotage" : (ok1+' / '+n1+' au niveau attendu');
+    html+=groupHTML('① Compétences', g1sum, g1, true);
+
+    // --- groupe 2 : profil & contrat (libellés de correspondance, pas de "maîtrise") ---
+    var g2='', n2=0, ok2=0;
+    var st=" "+rawText().toLowerCase()+" ";
+    r.pHits.forEach(function(d){
+      var strict=d.strict&&d.strict.some(function(k){return st.indexOf(k)>-1;});
+      var why=(d.id==='eng'&&strict)?d.strictWhy:(d.okWhy||d.why);
+      // lvl3 = correspond pleinement ; lvl2 = correspond, à confirmer ; sinon à discuter
+      var cls,ic,lc,lt;
+      if(d.lvl>=3){cls='yes';ic='✓';lc='v3';lt='correspond';ok2++;}
+      else if(d.lvl===2){cls='yes';ic='✓';lc='v2';lt='correspond';ok2++;}
+      else {cls='mid';ic='↗';lc='v1';lt='à discuter';}
+      g2+=rowHTML(cls,ic,d.label,why,lc,lt);n2++;
+    });
+    r.pNo.forEach(function(e){g2+=rowHTML('no','✕',e.label,e.why,'v0','ne correspond pas');n2++;});
+    if(r.seniorGap){g2+=rowHTML('no','✕','Séniorité attendue',r.seniorGap,'v0','écart majeur');n2++;}
+    html+=groupHTML('② Profil &amp; contrat', ok2+' / '+n2+' critères alignés', g2, false);
+
+    // --- groupe 3 : savoir-être (seulement ceux cités dans l'annonce) ---
+    var g3='', n3=0;
+    var softMatched=SOFT.filter(function(s){return s.kw.some(function(k){return st.indexOf(k)>-1;});});
+    if(softMatched.length===0) softMatched=[SOFT[2],SOFT[4],SOFT[3]]; // repli : autonomie, business, rigueur
+    softMatched.forEach(function(s){var cls=s.lvl===3?'yes':'mid';var l=L[s.lvl];g3+=rowHTML(cls,'✓',s.label,s.why,l[0],l[1]);n3++;});
+    html+=groupHTML('③ Savoir-être', n3+(n3>1?' qualités attendues, preuves à l\'appui':' qualité attendue, preuve à l\'appui'), g3, false);
+
+    bd.innerHTML=html;
+    var rows=bd.querySelectorAll('.row');
+    rows.forEach(function(el){el.classList.add('lit');});
+    setTimeout(function(){proofs.classList.add('show');},500);
+    setTimeout(function(){res.scrollIntoView({behavior:'smooth',block:'start'});},120);
+  }
+
+  document.getElementById('go').addEventListener('click',function(){
+    var t=document.getElementById('jd').value.trim();
+    if(t===""){document.getElementById('jd').focus();document.getElementById('jd').style.borderColor='var(--accent)';return;}
+    var ana=document.getElementById('analyzing'), res=document.getElementById('result');
+    res.classList.remove('show'); ana.classList.add('show');
+    var steps=['analyse de votre offre…','lecture des critères…','calcul de la compatibilité…'];var i=0;
+    var anatxt=document.getElementById('anatxt');anatxt.textContent=steps[0];
+    var iv=setInterval(function(){i++;if(i<steps.length)anatxt.textContent=steps[i];},420);
+    setTimeout(function(){clearInterval(iv);ana.classList.remove('show');render(analyze(t));},1300);
+  });
+
+  // Liens de contact définis directement dans le HTML (mailto, LinkedIn, cv.pdf relatif).
+})();
+</script>
+</body>
+</html>
