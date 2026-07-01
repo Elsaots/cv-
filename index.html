@@ -496,8 +496,7 @@
     var weakSector=null; SECTORS_WEAK.forEach(function(s){if(s.kw.some(function(k){return text.indexOf(k)>-1;}))weakSector=s.label;});
     if(weakSector) skillScore=Math.round(skillScore*0.93);
     // --- détection de séniorité (avant calcul, impacte le profil) ---
-    var SENIOR=['10 ans','8 ans','7 ans','15 ans','confirmé','senior','sénior','lead ','manager','directeur','director','head of','responsable d\'équipe','chef de service','expérimenté','encadrement','manager une équipe','diriger','dirigeras','animer des équipes','animation des équipes','pilotage de projets complexes'];
-    var seniorHits=SENIOR.filter(function(k){return text.indexOf(k)>-1;}).length;
+    var SENIOR=['10 ans','8 ans','7 ans','15 ans','confirmé','senior','sénior','lead ','manager','directeur','director','head of','responsable d\'équipe','chef de service','expérimenté','encadrement','manager une équipe','diriger','dirigeras','animer des équipes','animation des équipes','pilotage de projets complexes','expérience significative','fort enjeu','transformation digitale','coordonner les prestataires','superviser les phases','gouvernance data','gouvernance des données','projet stratégique','projets stratégiques','pilotage stratégique','responsable de programme','responsable du programme','faire le lien entre les','arbitrer'];    var seniorHits=SENIOR.filter(function(k){return text.indexOf(k)>-1;}).length;
     var yearsMatch=text.match(/(\d+)\s*ans?/g);
     var maxYears=0;
     if(yearsMatch){yearsMatch.forEach(function(s){var n=parseInt(s,10);if(n>maxYears&&n<=40)maxYears=n;});}
